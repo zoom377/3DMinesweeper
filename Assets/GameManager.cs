@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,6 +10,16 @@ public class GameManager : MonoBehaviour
     const int width = 10, height = 10, depth = 10;
 
     Tile[] tileArray;
+
+    public void OnTileClicked(GameObject tileVisual)
+    {
+        tileVisual.GetComponent<Renderer>().material.color = Color.black;
+    }
+
+    public void OnTileFlagged(GameObject tileVisual)
+    {
+        tileVisual.GetComponent<Renderer>().material.color = Color.red;
+    }
 
     void Start()
     {
@@ -94,6 +105,8 @@ public class GameManager : MonoBehaviour
 
         return false;
     }
+
+    
 
     class Tile
     {
