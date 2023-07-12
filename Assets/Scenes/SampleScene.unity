@@ -590,7 +590,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a35f4a84dc1e7b242a16b05ed17489cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 526138382224298686, guid: e2c2efd3ee1e17640b50432e81762922, type: 3}
+  _tilePrefab: {fileID: 526138382224298686, guid: e2c2efd3ee1e17640b50432e81762922, type: 3}
+  _numbers:
+  - {fileID: 2800000, guid: b05e6d7016efb61438c3a95ab18055ee, type: 3}
+  - {fileID: 2800000, guid: 7e4046ed4a1fe0747beae94acd6c91db, type: 3}
+  - {fileID: 2800000, guid: f8f934c3564191c4a818feb482356534, type: 3}
+  - {fileID: 2800000, guid: e7a6da5fd336bf846a7fd44fca16281e, type: 3}
+  - {fileID: 2800000, guid: 60802a8cdd35cbc42a9c02b74ef020fd, type: 3}
+  - {fileID: 2800000, guid: 2e0d162e15199ef41be8e3908c872d51, type: 3}
+  - {fileID: 2800000, guid: 3907f0d3db0f0a84b9c435fc3826a58b, type: 3}
+  - {fileID: 2800000, guid: e80f1f4e2c497a647b6e69a5d3d7ca74, type: 3}
+  - {fileID: 2800000, guid: e89f168b2e4452d4b88627ea9bdc19f2, type: 3}
+  - {fileID: 2800000, guid: a30d757b5041b79438050d80bcfc3522, type: 3}
+  - {fileID: 2800000, guid: 203de5d9600ae614182f79324bb94d90, type: 3}
+  - {fileID: 2800000, guid: eaf65d26c4f436e41a01ccca1f9ebed6, type: 3}
+  - {fileID: 2800000, guid: a9e17d37452e05b4a888766086d81c11, type: 3}
+  - {fileID: 2800000, guid: 9309da2593f21cb4186201a75f99c218, type: 3}
+  - {fileID: 2800000, guid: 71f8e0283b14ccd4c92842e174db9448, type: 3}
+  - {fileID: 2800000, guid: 9da422102d502c4458051f66708fc309, type: 3}
+  - {fileID: 2800000, guid: c77ebfc8d8dd97c4a8371ed9ca83cc2c, type: 3}
+  - {fileID: 2800000, guid: ac17530aa3906104db0be92defa12cf7, type: 3}
+  - {fileID: 2800000, guid: cf68aa7f45f5c644f9a54beccddd5451, type: 3}
+  - {fileID: 2800000, guid: ee78a2751b2490e41b3224c514a977ae, type: 3}
+  - {fileID: 2800000, guid: 51e117107abc733439e7532632793385, type: 3}
+  - {fileID: 2800000, guid: fdfa23cad6b7e864c9cfe8d050fc9afd, type: 3}
+  - {fileID: 2800000, guid: fbb0d2d95a61cf64d9f89458f38e4a7d, type: 3}
+  - {fileID: 2800000, guid: dbd13134c13efd34bbc237a32e720c58, type: 3}
+  - {fileID: 2800000, guid: eda44ea8bbc842c478338426f098bb8e, type: 3}
+  - {fileID: 2800000, guid: 27bd25ad54a9d8b45a1f34fed6b0961f, type: 3}
+  - {fileID: 2800000, guid: 4fbd73b30bd9f2f40897266c9dffb7d7, type: 3}
+  _flag: {fileID: 2800000, guid: cff4594c35c58bb4a9b4e3bf8a4ac64a, type: 3}
+  _debug: 1
 --- !u!4 &1813902689
 Transform:
   m_ObjectHideFlags: 0
