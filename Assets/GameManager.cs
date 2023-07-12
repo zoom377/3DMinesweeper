@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,7 +12,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] Texture _flag;
     [SerializeField] bool _debug;
 
-    const int WIDTH = 10, HEIGHT = 10, DEPTH = 10, BOMB_COUNT = 250, SAFE_AREA_SIZE = 1;
+    const int WIDTH = 10, HEIGHT = 10, DEPTH = 10, BOMB_COUNT = 100, SAFE_AREA_SIZE = 1;
 
     Tile[] _tileArray;
     bool _firstClick;
@@ -30,6 +31,7 @@ public class GameManager : MonoBehaviour
         }
 
         CascadeDiscover(tile);
+        UpdateAllTileVisuals();
     }
 
     public void OnTileFlagged(GameObject tileVisual)
@@ -56,6 +58,7 @@ public class GameManager : MonoBehaviour
         InitTileArray();
         UpdateAllTileVisuals();
 
+        Debug.Log(TileAdjacentPositions(new Vector3Int(5, 5, 5)).ToList().Count);
     }
 
     void OnFirstClick()
@@ -136,34 +139,55 @@ public class GameManager : MonoBehaviour
 
     void UpdateTileVisual(Vector3Int pos)
     {
-        //Create visual if not existing
+        //Ensure visual exists
         var tile = GetTile(pos);
+        if (!tile.Visual)
+        {
+            tile.Visual = Instantiate(_tilePrefab, pos, Quaternion.identity);
+            tile.Visual.GetComponent<MeshRenderer>().materials[1].mainTexture = _numbers[tile.AdjacentBombCount];
+        }
+
+        var renderer = tile.Visual.GetComponent<MeshRenderer>();
+
+        //Set a texture that displays the number of adjacent bombs.
+
         if (tile.IsDiscovered)
         {
-            if (tile.Visual)
-            {
-                Destroy(tile.Visual);
-                tile.Visual = null;
-            }
+            //bool hasAnyAdjacentUndiscovered = false;
+            //foreach (var adjPos in TileAdjacentPositions(pos))
+            //{
+            //    if (!GetTile(adjPos).IsDiscovered)
+            //    {
+            //        hasAnyAdjacentUndiscovered = true;
+            //        break;
+            //    }
+            //}
+
+            //if (hasAnyAdjacentUndiscovered)
+            //{
+            //    renderer.materials[0].color = new Color(1, 1, 1, .1f);
+            //    renderer.materials[1].color = new Color(1, 1, 1, .25f);
+            //}
+            //else
+            //{
+                renderer.materials[0].color = new Color(1, 1, 1, 0);
+                renderer.materials[1].color = new Color(1, 1, 1, 0);
+            //}
         }
         else
         {
-            //Ensure visual exists
-            if (!tile.Visual)
-            {
-                tile.Visual = Instantiate(_tilePrefab, pos, Quaternion.identity);
-            }
 
-            if (_debug)
-            {
-                if (tile.IsBomb)
-                {
-                    tile.Visual.GetComponent<Renderer>().material.color = Color.yellow;
-                }
-            }
+            //if (_debug)
+            //{
+            //    if (tile.IsBomb)
+            //    {
+            //        tile.Visual.GetComponent<Renderer>().material.color = Color.yellow;
+            //    }
+            //}
 
-            //Set a texture that displays the number of adjacent bombs.
-            tile.Visual.GetComponent<MeshRenderer>().materials[1].mainTexture = _numbers[tile.AdjacentBombCount];
+            
+            renderer.materials[0].color = new Color(1, 1, 1, 1f);
+            renderer.materials[1].color = new Color(1, 1, 1, .0f);
         }
 
     }
@@ -269,7 +293,6 @@ public class GameManager : MonoBehaviour
         }
 
         var tilePos = GetTilePosFromVisual(tile.Visual);
-        UpdateTileVisual(tilePos);
 
         if (tile.AdjacentBombCount == 0)
         {
@@ -278,6 +301,8 @@ public class GameManager : MonoBehaviour
                 CascadeDiscover(GetTile(adjPos), checkedTiles);
             }
         }
+
+        
     }
 
     class Tile
