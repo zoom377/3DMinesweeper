@@ -11,13 +11,25 @@ public class GameManager : MonoBehaviour
     [SerializeField] Texture _flag;
     [SerializeField] bool _debug;
 
-    const int WIDTH = 10, HEIGHT = 10, DEPTH = 10, BOMB_COUNT = 250;
+    const int WIDTH = 10, HEIGHT = 10, DEPTH = 10, BOMB_COUNT = 250, SAFE_AREA_SIZE = 1;
 
     Tile[] _tileArray;
+    bool _firstClick;
+    Vector3Int _firstClickPosition;
 
     public void OnTileClicked(GameObject tileVisual)
     {
-        tileVisual.GetComponent<Renderer>().material.color = Color.black;
+        var clickedTilePos = GetTilePosFromVisual(tileVisual);
+        var tile = GetTile(clickedTilePos);
+
+        if (_firstClick)
+        {
+            _firstClickPosition = clickedTilePos;
+            _firstClick = false;
+            OnFirstClick();
+        }
+
+        CascadeDiscover(tile);
     }
 
     public void OnTileFlagged(GameObject tileVisual)
@@ -32,24 +44,25 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reset();
+        }
     }
 
     private void Reset()
     {
+        _firstClick = true;
         InitTileArray();
+        UpdateAllTileVisuals();
+
+    }
+
+    void OnFirstClick()
+    {
         PlaceBombsRandomly();
         UpdateAdjacentBombCounts();
-        for (int x = 0; x < WIDTH; x++)
-        {
-            for (int y = 0; y < HEIGHT; y++)
-            {
-                for (int z = 0; z < DEPTH; z++)
-                {
-                    UpdateTileVisual(new Vector3Int(x, y, z));
-                }
-            }
-        }
+        UpdateAllTileVisuals();
     }
 
     void InitTileArray()
@@ -81,7 +94,12 @@ public class GameManager : MonoBehaviour
                     UnityEngine.Random.Range(0, DEPTH));
 
                 Tile tile = GetTile(pos);
-                if (!tile.IsBomb)
+
+                bool isInSafeArea = Mathf.Abs(_firstClickPosition.x - pos.x) <= SAFE_AREA_SIZE
+                    && Mathf.Abs(_firstClickPosition.y - pos.y) <= SAFE_AREA_SIZE
+                    && Mathf.Abs(_firstClickPosition.z - pos.z) <= SAFE_AREA_SIZE;
+
+                if (!tile.IsBomb && !isInSafeArea)
                 {
                     spaceFound = true;
                     tile.IsBomb = true;
@@ -108,29 +126,46 @@ public class GameManager : MonoBehaviour
 
     }
 
-
+    void UpdateAllTileVisuals()
+    {
+        foreach (var tilePos in AllTilePositions())
+        {
+            UpdateTileVisual(tilePos);
+        }
+    }
 
     void UpdateTileVisual(Vector3Int pos)
     {
         //Create visual if not existing
         var tile = GetTile(pos);
-        if (!tile.Visual)
+        if (tile.IsDiscovered)
         {
-            tile.Visual = Instantiate(_tilePrefab, pos, Quaternion.identity);
-        }
-
-        //Update
-        if (_debug)
-        {
-            if (tile.IsBomb)
+            if (tile.Visual)
             {
-                tile.Visual.GetComponent<Renderer>().material.color = Color.yellow;
+                Destroy(tile.Visual);
+                tile.Visual = null;
             }
         }
+        else
+        {
+            //Ensure visual exists
+            if (!tile.Visual)
+            {
+                tile.Visual = Instantiate(_tilePrefab, pos, Quaternion.identity);
+            }
 
-        //Set a texture that displays the number of adjacent bombs.
-        //tile.Visual.GetComponent<MeshRenderer>().materials[1].SetTexture("Albedo" ,_numbers[tile.AdjacentBombCount]);
-        tile.Visual.GetComponent<MeshRenderer>().materials[1].mainTexture = _numbers[tile.AdjacentBombCount];
+            if (_debug)
+            {
+                if (tile.IsBomb)
+                {
+                    tile.Visual.GetComponent<Renderer>().material.color = Color.yellow;
+                }
+            }
+
+            //Set a texture that displays the number of adjacent bombs.
+            tile.Visual.GetComponent<MeshRenderer>().materials[1].mainTexture = _numbers[tile.AdjacentBombCount];
+        }
+
     }
 
     IEnumerable<Vector3Int> TileAdjacentPositions(Vector3Int pos)
@@ -173,6 +208,18 @@ public class GameManager : MonoBehaviour
         return _tileArray[Array3DToIndex(pos)];
     }
 
+    Vector3Int GetTilePosFromVisual(GameObject visual)
+    {
+        foreach (var pos in AllTilePositions())
+        {
+            var tile = GetTile(pos);
+            if (tile.Visual == visual)
+                return pos;
+        }
+
+        return new Vector3Int();
+    }
+
     int Array3DToIndex(Vector3Int pos)
     {
         return pos.x * HEIGHT * DEPTH
@@ -207,7 +254,31 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    void CascadeDiscover(Tile tile) => CascadeDiscover(tile, new HashSet<Tile>());
+    void CascadeDiscover(Tile tile, HashSet<Tile> checkedTiles)
+    {
+        if (checkedTiles.Contains(tile))
+            return;
 
+        checkedTiles.Add(tile);
+        tile.IsDiscovered = true;
+
+        if (tile.IsFlagged)
+        {
+            tile.IsFlagged = false;
+        }
+
+        var tilePos = GetTilePosFromVisual(tile.Visual);
+        UpdateTileVisual(tilePos);
+
+        if (tile.AdjacentBombCount == 0)
+        {
+            foreach (var adjPos in TileAdjacentPositions(tilePos))
+            {
+                CascadeDiscover(GetTile(adjPos), checkedTiles);
+            }
+        }
+    }
 
     class Tile
     {
