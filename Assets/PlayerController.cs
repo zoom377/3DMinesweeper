@@ -17,6 +17,19 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+
+        if (UnityEngine.Cursor.lockState == CursorLockMode.None)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+                UnityEngine.Cursor.visible = false;
+            }
+
+            return;
+        }
+
+
         //Movement
         var moveX = Input.GetAxis("Horizontal");
         var moveY = Input.GetAxis("Vertical");
@@ -27,8 +40,8 @@ public class PlayerController : MonoBehaviour
         transform.Translate(move);
 
         //Aiming
-        aimX -= Input.GetAxis("Mouse Y") * Time.deltaTime * aimSens;
-        aimY += Input.GetAxis("Mouse X") * Time.deltaTime * aimSens;
+        aimX -= Input.GetAxis("Mouse Y") * aimSens;
+        aimY += Input.GetAxis("Mouse X") * aimSens;
         aimX = Mathf.Clamp(aimX, -90, 90);
 
         transform.rotation = Quaternion.Euler(aimX, aimY, 0);
