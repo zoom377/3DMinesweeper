@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSens, aimSens;
 
     float aimX, aimY;
+    Collider _lastCollider;
 
     void Start()
     {
@@ -46,26 +48,20 @@ public class PlayerController : MonoBehaviour
 
         transform.rotation = Quaternion.Euler(aimX, aimY, 0);
 
-
-        if (Input.GetMouseButtonDown(0))
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
         {
-            Ray ray = new Ray(transform.position, transform.forward);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
+            if (Input.GetMouseButtonDown(0))
             {
                 FindObjectOfType<GameManager>().OnTileClicked(hit.transform.parent.gameObject);
             }
-        }
-        if (Input.GetMouseButtonDown(1))
-        {
-            Ray ray = new Ray(transform.position, transform.forward);
-            RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit))
+            if (Input.GetMouseButtonDown(1))
             {
                 FindObjectOfType<GameManager>().OnTileFlagged(hit.transform.parent.gameObject);
             }
+
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))

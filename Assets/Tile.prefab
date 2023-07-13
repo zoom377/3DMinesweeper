@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 8791671427045643637}
   - component: {fileID: 8355104147137470486}
   - component: {fileID: 4015838200868687470}
+  - component: {fileID: 2579848333085829336}
+  - component: {fileID: 1660930293431131848}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
@@ -97,6 +99,34 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &2579848333085829336
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163598990203272814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfa224294bf4b784387e9748171d8411, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1660930293431131848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163598990203272814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31cbb0ff329a67c498950202ead0be5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _affectedRenderers:
+  - {fileID: 8355104147137470486}
+  _lerpSpeed: 20
+  _defaultColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &526138382224298686
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,6 +172,8 @@ GameObject:
   - component: {fileID: 4008939513745700102}
   - component: {fileID: 6187894395661660814}
   - component: {fileID: 105680859995509722}
+  - component: {fileID: 7979860117719568088}
+  - component: {fileID: 7917757112452800240}
   m_Layer: 2
   m_Name: BombCount
   m_TagString: Untagged
@@ -315,3 +347,31 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_renderer: {fileID: 6187894395661660814}
   m_maskType: 0
+--- !u!114 &7979860117719568088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7570848358066991107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6163574e336b33e42a066d40b04e882e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7917757112452800240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7570848358066991107}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31cbb0ff329a67c498950202ead0be5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _affectedRenderers:
+  - {fileID: 6187894395661660814}
+  _lerpSpeed: 20
+  _defaultColor: {r: 1, g: 1, b: 1, a: 0.101960786}

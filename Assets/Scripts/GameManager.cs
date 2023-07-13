@@ -11,26 +11,31 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _tilePrefab;
     [SerializeField] Texture[] _numbers;
     [SerializeField] Texture _flag;
+    [SerializeField] Color _hoverPrimary, _hoverSecondary;
     [SerializeField] bool _debug;
 
     const int SAFE_AREA_SIZE = 1;
-    int _width, _height, _depth, _bombCount;
+    int _width = 10, _height = 10, _depth = 10, _bombCount = 100;
 
     Tile[] _tileArray;
     bool _firstClick;
     Vector3Int _firstClickPosition;
 
-    
+
 
     void Start()
     {
         var state = FindObjectOfType<State>();
-        _width = state.Width;
-        _height = state.Height;
-        _depth = state.Depth;
-        int totalTiles = _width * _height * _depth;
-        _bombCount = Mathf.CeilToInt((float)totalTiles * (state.Percentage / 100f));
-        Debug.Log($"Field parameters are width:${_width}, height:${_height}, depth:${_depth}, total:${totalTiles}, bombs:${_bombCount}");
+        if (state)
+        {
+            _width = state.Width;
+            _height = state.Height;
+            _depth = state.Depth;
+            int totalTiles = _width * _height * _depth;
+            _bombCount = Mathf.CeilToInt((float)totalTiles * (state.Percentage / 100f));
+            Debug.Log($"Field parameters are width:${_width}, height:${_height}, depth:${_depth}, total:${totalTiles}, bombs:${_bombCount}");
+        }
+
 
         Reset();
     }
@@ -70,6 +75,55 @@ public class GameManager : MonoBehaviour
 
         tile.IsFlagged = !tile.IsFlagged;
         UpdateTileVisual(tilePos);
+    }
+
+    //public void OnTileHover
+
+    public void OnTileHoverEnter(GameObject tileVisual)
+    {
+        var pos = GetTilePosFromVisual(tileVisual);
+        var tile = GetTile(pos);
+
+        tileVisual.transform.Find("Tile").GetComponent<ColorLerper>().SetColor(_hoverPrimary);
+
+        foreach (var adjPos in TileAdjacentPositions(pos))
+        {
+            var adjTile = GetTile(adjPos);
+            adjTile.Visual.transform.Find("BombCount").GetComponent<ColorLerper>().SetColor(_hoverSecondary);
+        }
+    }
+
+    public void OnTileHoverExit(GameObject tileVisual)
+    {
+        var pos = GetTilePosFromVisual(tileVisual);
+        var tile = GetTile(pos);
+
+        tileVisual.transform.Find("Tile").GetComponent<ColorLerper>().SetColorToDefault();
+
+        foreach (var adjPos in TileAdjacentPositions(pos))
+        {
+            var adjTile = GetTile(adjPos);
+            adjTile.Visual.transform.Find("BombCount").GetComponent<ColorLerper>().SetColorToDefault();
+        }
+    }
+
+    public void OnNumberHoverEnter(GameObject tileVisual)
+    {
+        //var pos = GetTilePosFromVisual(tileVisual);
+        //var tile = GetTile(pos);
+
+        //tileVisual.GetComponent<ColorLerper>().SetColor(_hoverPrimary);
+
+        //foreach (var adjPos in TileAdjacentPositions(pos))
+        //{
+        //    var adjTile = GetTile(adjPos);
+        //    adjTile.Visual.GetComponent<ColorLerper>().SetColor(_hoverSecondary);
+        //}
+    }
+
+    public void OnNumberHoverExit(GameObject tileVisual)
+    {
+
     }
 
     private void Reset()

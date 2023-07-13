@@ -406,6 +406,7 @@ GameObject:
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
   - component: {fileID: 963194229}
+  - component: {fileID: 963194230}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -493,6 +494,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSens: 5
   aimSens: 5
+--- !u!114 &963194230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a984568153be0af47af4fb916cb1bf27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localDirection: {x: 0, y: 0, z: 1}
+  _offset: {x: 0, y: 0, z: 0}
+  _maxDistance: 100
 --- !u!1 &1208409704
 GameObject:
   m_ObjectHideFlags: 0
@@ -620,6 +636,8 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 27bd25ad54a9d8b45a1f34fed6b0961f, type: 3}
   - {fileID: 2800000, guid: 4fbd73b30bd9f2f40897266c9dffb7d7, type: 3}
   _flag: {fileID: 2800000, guid: cff4594c35c58bb4a9b4e3bf8a4ac64a, type: 3}
+  _hoverPrimary: {r: 1, g: 0.15075377, b: 0, a: 1}
+  _hoverSecondary: {r: 0, g: 0.13043451, b: 1, a: 1}
   _debug: 1
 --- !u!4 &1813902689
 Transform:

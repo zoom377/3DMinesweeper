@@ -24,10 +24,6 @@ public class MenuManager : MonoBehaviour
         percentageInput.text = PlayerPrefs.GetInt("Percentage", 10).ToString();
     }
 
-    void Update()
-    {
-
-    }
 
     public void OnPlayClicked()
     {
