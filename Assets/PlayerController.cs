@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        //UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        //UnityEngine.Cursor.visible = false;
     }
 
     void Update()
@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                FindObjectOfType<GameManager>().OnTileClicked(hit.transform.gameObject);
+                FindObjectOfType<GameManager>().OnTileClicked(hit.transform.parent.gameObject);
             }
         }
         if (Input.GetMouseButtonDown(1))
@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                FindObjectOfType<GameManager>().OnTileFlagged(hit.transform.gameObject);
+                FindObjectOfType<GameManager>().OnTileFlagged(hit.transform.parent.gameObject);
             }
         }
 

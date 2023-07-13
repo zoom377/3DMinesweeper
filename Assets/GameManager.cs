@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -12,16 +13,43 @@ public class GameManager : MonoBehaviour
     [SerializeField] Texture _flag;
     [SerializeField] bool _debug;
 
-    const int WIDTH = 10, HEIGHT = 10, DEPTH = 10, BOMB_COUNT = 100, SAFE_AREA_SIZE = 1;
+    const int SAFE_AREA_SIZE = 1;
+    int _width, _height, _depth, _bombCount;
 
     Tile[] _tileArray;
     bool _firstClick;
     Vector3Int _firstClickPosition;
 
+    
+
+    void Start()
+    {
+        var state = FindObjectOfType<State>();
+        _width = state.Width;
+        _height = state.Height;
+        _depth = state.Depth;
+        int totalTiles = _width * _height * _depth;
+        _bombCount = Mathf.CeilToInt((float)totalTiles * (state.Percentage / 100f));
+        Debug.Log($"Field parameters are width:${_width}, height:${_height}, depth:${_depth}, total:${totalTiles}, bombs:${_bombCount}");
+
+        Reset();
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Reset();
+        }
+    }
+
     public void OnTileClicked(GameObject tileVisual)
     {
         var clickedTilePos = GetTilePosFromVisual(tileVisual);
         var tile = GetTile(clickedTilePos);
+
+        if (tile.IsFlagged)
+            return;
 
         if (_firstClick)
         {
@@ -36,20 +64,12 @@ public class GameManager : MonoBehaviour
 
     public void OnTileFlagged(GameObject tileVisual)
     {
-        tileVisual.GetComponent<Renderer>().material.color = Color.red;
-    }
+        //tileVisual.GetComponent<Renderer>().material.color = Color.red;
+        var tilePos = GetTilePosFromVisual(tileVisual);
+        var tile = GetTile(tilePos);
 
-    void Start()
-    {
-        Reset();
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Reset();
-        }
+        tile.IsFlagged = !tile.IsFlagged;
+        UpdateTileVisual(tilePos);
     }
 
     private void Reset()
@@ -70,7 +90,7 @@ public class GameManager : MonoBehaviour
 
     void InitTileArray()
     {
-        _tileArray = new Tile[WIDTH * HEIGHT * DEPTH];
+        _tileArray = new Tile[_width * _height * _depth];
         for (int i = 0; i < _tileArray.Length; i++)
         {
             if (_tileArray[i] != null && !_tileArray[i].Visual)
@@ -86,15 +106,15 @@ public class GameManager : MonoBehaviour
     {
         var bombsPlaced = 0;
 
-        while (bombsPlaced < BOMB_COUNT)
+        while (bombsPlaced < _bombCount)
         {
             bool spaceFound = false;
             while (!spaceFound)
             {
                 var pos = new Vector3Int(
-                    UnityEngine.Random.Range(0, WIDTH),
-                    UnityEngine.Random.Range(0, HEIGHT),
-                    UnityEngine.Random.Range(0, DEPTH));
+                    UnityEngine.Random.Range(0, _width),
+                    UnityEngine.Random.Range(0, _height),
+                    UnityEngine.Random.Range(0, _depth));
 
                 Tile tile = GetTile(pos);
 
@@ -139,43 +159,32 @@ public class GameManager : MonoBehaviour
 
     void UpdateTileVisual(Vector3Int pos)
     {
-        //Ensure visual exists
         var tile = GetTile(pos);
+
+        //Ensure visual exists
         if (!tile.Visual)
         {
             tile.Visual = Instantiate(_tilePrefab, pos, Quaternion.identity);
-            tile.Visual.GetComponent<MeshRenderer>().materials[1].mainTexture = _numbers[tile.AdjacentBombCount];
         }
 
-        var renderer = tile.Visual.GetComponent<MeshRenderer>();
-
-        //Set a texture that displays the number of adjacent bombs.
+        //var renderer = tile.Visual.GetComponent<MeshRenderer>();
 
         if (tile.IsDiscovered)
         {
-            //bool hasAnyAdjacentUndiscovered = false;
-            //foreach (var adjPos in TileAdjacentPositions(pos))
-            //{
-            //    if (!GetTile(adjPos).IsDiscovered)
-            //    {
-            //        hasAnyAdjacentUndiscovered = true;
-            //        break;
-            //    }
-            //}
+            tile.Visual.transform.Find("Tile").gameObject.SetActive(false);
 
-            //if (hasAnyAdjacentUndiscovered)
-            //{
-            //    renderer.materials[0].color = new Color(1, 1, 1, .1f);
-            //    renderer.materials[1].color = new Color(1, 1, 1, .25f);
-            //}
-            //else
-            //{
-                renderer.materials[0].color = new Color(1, 1, 1, 0);
-                renderer.materials[1].color = new Color(1, 1, 1, 0);
-            //}
+            if (tile.AdjacentBombCount > 0)
+            {
+                tile.Visual.transform.Find("BombCount").gameObject.SetActive(true);
+                tile.Visual.GetComponentInChildren<TMP_Text>().text = tile.AdjacentBombCount.ToString();
+            }
         }
         else
         {
+            if (tile.IsFlagged)
+                tile.Visual.transform.Find("Tile").GetComponent<MeshRenderer>().material.color = Color.red;
+            else
+                tile.Visual.transform.Find("Tile").GetComponent<MeshRenderer>().material.color = Color.grey;
 
             //if (_debug)
             //{
@@ -185,9 +194,8 @@ public class GameManager : MonoBehaviour
             //    }
             //}
 
-            
-            renderer.materials[0].color = new Color(1, 1, 1, 1f);
-            renderer.materials[1].color = new Color(1, 1, 1, .0f);
+            //renderer.materials[0].color = new Color(1, 1, 1, 1f);
+            //renderer.materials[1].color = new Color(1, 1, 1, .0f);
         }
 
     }
@@ -215,11 +223,11 @@ public class GameManager : MonoBehaviour
 
     IEnumerable<Vector3Int> AllTilePositions()
     {
-        for (int x = 0; x < WIDTH; x++)
+        for (int x = 0; x < _width; x++)
         {
-            for (int y = 0; y < HEIGHT; y++)
+            for (int y = 0; y < _height; y++)
             {
-                for (int z = 0; z < DEPTH; z++)
+                for (int z = 0; z < _depth; z++)
                 {
                     yield return new Vector3Int(x, y, z);
                 }
@@ -246,21 +254,21 @@ public class GameManager : MonoBehaviour
 
     int Array3DToIndex(Vector3Int pos)
     {
-        return pos.x * HEIGHT * DEPTH
-            + pos.y * DEPTH
+        return pos.x * _height * _depth
+            + pos.y * _depth
             + pos.z;
     }
 
     Vector3Int ArrayIndexTo3D(int index)
     {
-        int z = index % DEPTH;
-        z /= DEPTH;
+        int z = index % _depth;
+        z /= _depth;
 
-        int y = index % HEIGHT;
-        y /= HEIGHT;
+        int y = index % _height;
+        y /= _height;
 
-        int x = index & WIDTH;
-        x /= WIDTH;
+        int x = index & _width;
+        x /= _width;
 
         return new Vector3Int(x, y, z);
     }
@@ -270,9 +278,9 @@ public class GameManager : MonoBehaviour
         if (pos.x >= 0 &&
             pos.y >= 0 &&
             pos.z >= 0 &&
-            pos.x < WIDTH &&
-            pos.y < HEIGHT &&
-            pos.z < DEPTH)
+            pos.x < _width &&
+            pos.y < _height &&
+            pos.z < _depth)
             return true;
 
         return false;
@@ -302,7 +310,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        
+
     }
 
     class Tile
