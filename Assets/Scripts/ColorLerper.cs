@@ -9,6 +9,7 @@ public class ColorLerper : MonoBehaviour
     [SerializeField] Color _defaultColor;
 
     Color _targetColor;
+    bool _locked;
 
     void Start()
     {
@@ -36,11 +37,28 @@ public class ColorLerper : MonoBehaviour
 
     public void SetColor(Color color)
     {
+        if (_locked)
+            return;
+
         _targetColor = color;
     }
 
     public void SetColorToDefault()
     {
+        if (_locked)
+            return;
+
         _targetColor = _defaultColor;
+    }
+
+    public void LockAsColor(Color color)
+    {
+        _locked = true;
+        _targetColor = color;
+    }
+
+    public void UnlockColor()
+    {
+        _locked = false;
     }
 }

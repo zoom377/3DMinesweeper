@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject _tilePrefab;
     [SerializeField] Texture[] _numbers;
     [SerializeField] Texture _flag;
-    [SerializeField] Color _hoverPrimary, _hoverSecondary;
+    [SerializeField] Color _hoverPrimary, _hoverSecondary, flagged;
     [SerializeField] bool _debug;
 
     const int SAFE_AREA_SIZE = 1;
@@ -109,21 +109,30 @@ public class GameManager : MonoBehaviour
 
     public void OnNumberHoverEnter(GameObject tileVisual)
     {
-        //var pos = GetTilePosFromVisual(tileVisual);
-        //var tile = GetTile(pos);
+        var pos = GetTilePosFromVisual(tileVisual);
+        var tile = GetTile(pos);
 
-        //tileVisual.GetComponent<ColorLerper>().SetColor(_hoverPrimary);
+        tileVisual.transform.Find("BombCount").GetComponent<ColorLerper>().SetColor(_hoverPrimary);
 
-        //foreach (var adjPos in TileAdjacentPositions(pos))
-        //{
-        //    var adjTile = GetTile(adjPos);
-        //    adjTile.Visual.GetComponent<ColorLerper>().SetColor(_hoverSecondary);
-        //}
+        foreach (var adjPos in TileAdjacentPositions(pos))
+        {
+            var adjTile = GetTile(adjPos);
+            adjTile.Visual.transform.Find("Tile").GetComponent<ColorLerper>().SetColor(_hoverSecondary);
+        }
     }
 
     public void OnNumberHoverExit(GameObject tileVisual)
     {
+        var pos = GetTilePosFromVisual(tileVisual);
+        var tile = GetTile(pos);
 
+        tileVisual.transform.Find("BombCount").GetComponent<ColorLerper>().SetColorToDefault();
+
+        foreach (var adjPos in TileAdjacentPositions(pos))
+        {
+            var adjTile = GetTile(adjPos);
+            adjTile.Visual.transform.Find("Tile").GetComponent<ColorLerper>().SetColorToDefault();
+        }
     }
 
     private void Reset()
@@ -221,8 +230,6 @@ public class GameManager : MonoBehaviour
             tile.Visual = Instantiate(_tilePrefab, pos, Quaternion.identity);
         }
 
-        //var renderer = tile.Visual.GetComponent<MeshRenderer>();
-
         if (tile.IsDiscovered)
         {
             tile.Visual.transform.Find("Tile").gameObject.SetActive(false);
@@ -236,22 +243,25 @@ public class GameManager : MonoBehaviour
         else
         {
             if (tile.IsFlagged)
-                tile.Visual.transform.Find("Tile").GetComponent<MeshRenderer>().material.color = Color.red;
+            {
+                tile.Visual.transform
+                    .Find("Tile")
+                    .GetComponent<ColorLerper>()
+                    .LockAsColor(flagged);
+            }
             else
-                tile.Visual.transform.Find("Tile").GetComponent<MeshRenderer>().material.color = Color.grey;
+            {
+                tile.Visual.transform
+                    .Find("Tile")
+                    .GetComponent<ColorLerper>()
+                    .UnlockColor();
 
-            //if (_debug)
-            //{
-            //    if (tile.IsBomb)
-            //    {
-            //        tile.Visual.GetComponent<Renderer>().material.color = Color.yellow;
-            //    }
-            //}
-
-            //renderer.materials[0].color = new Color(1, 1, 1, 1f);
-            //renderer.materials[1].color = new Color(1, 1, 1, .0f);
+                tile.Visual.transform
+                    .Find("Tile")
+                    .GetComponent<ColorLerper>()
+                    .SetColorToDefault();
+            }
         }
-
     }
 
     IEnumerable<Vector3Int> TileAdjacentPositions(Vector3Int pos)

@@ -6,16 +6,12 @@ using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float moveSens, aimSens;
+    [SerializeField] float _moveSens, _aimSens, _aimSmooth;
+    [SerializeField] bool _smoothingEnabled;
 
-    float aimX, aimY;
+    Vector2 _aim, _targetAim;
+
     Collider _lastCollider;
-
-    void Start()
-    {
-        //UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        //UnityEngine.Cursor.visible = false;
-    }
 
     void Update()
     {
@@ -38,15 +34,17 @@ public class PlayerController : MonoBehaviour
         var moveZ = Input.GetAxis("UpDown");
 
         Vector3 move = new Vector3(moveX, moveZ, moveY);
-        move *= Time.deltaTime * moveSens;
+        move *= Time.deltaTime * _moveSens;
         transform.Translate(move);
 
         //Aiming
-        aimX -= Input.GetAxis("Mouse Y") * aimSens;
-        aimY += Input.GetAxis("Mouse X") * aimSens;
-        aimX = Mathf.Clamp(aimX, -90, 90);
+        _targetAim.x -= Input.GetAxis("Mouse Y") * _aimSens;
+        _targetAim.y += Input.GetAxis("Mouse X") * _aimSens;
+        _targetAim.x = Mathf.Clamp(_targetAim.x, -90, 90);
 
-        transform.rotation = Quaternion.Euler(aimX, aimY, 0);
+        _aim = Vector2.Lerp(_aim, _targetAim, _aimSmooth * Time.deltaTime);
+
+        transform.rotation = Quaternion.Euler(_aim.x, _aim.y, 0);
 
         Ray ray = new Ray(transform.position, transform.forward);
         RaycastHit hit;
@@ -71,7 +69,4 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-    }
 }

@@ -432,7 +432,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.15, g: 0.15, b: 0.15, a: 0}
+  m_BackGroundColor: {r: 0.1, g: 0.1, b: 0.1, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -492,8 +492,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6db905d3041b6249939fdb85bb0230c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSens: 5
-  aimSens: 5
+  _moveSens: 5
+  _aimSens: 3
+  _aimSmooth: 15
+  _smoothingEnabled: 1
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -636,8 +638,9 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 27bd25ad54a9d8b45a1f34fed6b0961f, type: 3}
   - {fileID: 2800000, guid: 4fbd73b30bd9f2f40897266c9dffb7d7, type: 3}
   _flag: {fileID: 2800000, guid: cff4594c35c58bb4a9b4e3bf8a4ac64a, type: 3}
-  _hoverPrimary: {r: 1, g: 0.15075377, b: 0, a: 1}
-  _hoverSecondary: {r: 0, g: 0.13043451, b: 1, a: 1}
+  _hoverPrimary: {r: 0.1393305, g: 1, b: 0, a: 1}
+  _hoverSecondary: {r: 1, g: 0.5481836, b: 0, a: 1}
+  flagged: {r: 1, g: 0, b: 0, a: 1}
   _debug: 1
 --- !u!4 &1813902689
 Transform:
