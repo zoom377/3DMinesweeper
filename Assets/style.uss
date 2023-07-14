@@ -33,3 +33,6 @@
     border-top-color: rgb(128, 128, 128);
     border-bottom-color: rgb(128, 128, 128);
 }
+
+.inputPair {
+}
