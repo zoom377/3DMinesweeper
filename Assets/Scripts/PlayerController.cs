@@ -9,13 +9,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _moveSens, _aimSens, _aimSmooth;
     [SerializeField] bool _smoothingEnabled;
 
-    Vector2 _aim, _targetAim;
+    public bool Enabled = true;
 
+    Vector2 _aim, _targetAim;
     Collider _lastCollider;
 
     void Update()
     {
-
         if (UnityEngine.Cursor.lockState == CursorLockMode.None)
         {
             if (Input.GetMouseButtonDown(0))
@@ -27,6 +27,15 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+        }
+
+
+        if (!Enabled)
+            return;
 
         //Movement
         var moveX = Input.GetAxis("Horizontal");
@@ -59,14 +68,6 @@ public class PlayerController : MonoBehaviour
             {
                 FindObjectOfType<GameManager>().OnTileFlagged(hit.transform.parent.gameObject);
             }
-
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            UnityEngine.Cursor.lockState = CursorLockMode.None;
-            UnityEngine.Cursor.visible = true;
         }
     }
-
 }

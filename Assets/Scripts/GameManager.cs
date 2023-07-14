@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,15 +14,17 @@ public class GameManager : MonoBehaviour
     [SerializeField] Texture _flag;
     [SerializeField] Color _hoverPrimary, _hoverSecondary, flagged;
     [SerializeField] bool _debug;
+    [SerializeField] float _gameOverExplosionImpulse, _gameOverExplosionTorqueImpulse;
+    [SerializeField] TMP_Text _gameOverText;
 
     const int SAFE_AREA_SIZE = 1;
-    int _width = 10, _height = 10, _depth = 10, _bombCount = 100;
 
+    int _width = 10, _height = 10, _depth = 10, _bombCount = 100, _bombsLeft, _tilesLeft;
+    float _startTime;
+    bool _firstClick, _gameOver;
     Tile[] _tileArray;
-    bool _firstClick;
     Vector3Int _firstClickPosition;
-
-
+    TMP_Text _statusText;
 
     void Start()
     {
@@ -36,6 +39,8 @@ public class GameManager : MonoBehaviour
             Debug.Log($"Field parameters are width:${_width}, height:${_height}, depth:${_depth}, total:${totalTiles}, bombs:${_bombCount}");
         }
 
+        _statusText = GameObject.Find("StatusText").GetComponent<TMP_Text>();
+        //_gameOverText = GameObject.Find("GameOverText").GetComponent<TMP_Text>();
 
         Reset();
     }
@@ -44,17 +49,40 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
-            Reset();
+            //Reset();
+            SceneManager.LoadScene("Play");
         }
+
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            SceneManager.LoadScene("Menu");
+        }
+
+        if (!_firstClick)
+        {
+            var timeSinceStart = Time.time - _startTime;
+            _statusText.text = $"Bombs remaining: {_bombsLeft}\nUndiscovered tiles: {_tilesLeft}\nTime taken: {timeSinceStart.ToString("#.#")}";
+        }
+        
     }
 
     public void OnTileClicked(GameObject tileVisual)
     {
+        if (_gameOver)
+            return;
+
         var clickedTilePos = GetTilePosFromVisual(tileVisual);
         var tile = GetTile(clickedTilePos);
 
         if (tile.IsFlagged)
             return;
+
+        if (tile.IsBomb)
+        {
+            GameOver(tileVisual);
+        }
 
         if (_firstClick)
         {
@@ -67,17 +95,20 @@ public class GameManager : MonoBehaviour
         UpdateAllTileVisuals();
     }
 
+    
     public void OnTileFlagged(GameObject tileVisual)
     {
-        //tileVisual.GetComponent<Renderer>().material.color = Color.red;
+        if (_gameOver)
+            return;
+
         var tilePos = GetTilePosFromVisual(tileVisual);
         var tile = GetTile(tilePos);
 
         tile.IsFlagged = !tile.IsFlagged;
+        _bombsLeft += tile.IsFlagged ? -1 : 1;
+
         UpdateTileVisual(tilePos);
     }
-
-    //public void OnTileHover
 
     public void OnTileHoverEnter(GameObject tileVisual)
     {
@@ -134,6 +165,34 @@ public class GameManager : MonoBehaviour
             adjTile.Visual.transform.Find("Tile").GetComponent<ColorLerper>().SetColorToDefault();
         }
     }
+    private void GameOver(GameObject tileVisual)
+    {
+        _gameOver = true;
+
+        _gameOverText.gameObject.SetActive(true);
+
+        var allTilePos = AllTilePositions();
+        var losingTile = tileVisual.transform.Find("Tile");
+
+        foreach (var tilePos in allTilePos)
+        {
+            var tile = GetTile(tilePos);
+            var tileCube = tile.Visual.transform.Find("Tile");
+
+            var rb = tileCube.GetComponent<Rigidbody>();
+            rb.isKinematic = false;
+
+            Vector3 impulse = (tileCube.position - losingTile.position).normalized * _gameOverExplosionImpulse;
+            Vector3 torqueImpulse = new Vector3(
+                UnityEngine.Random.Range(-_gameOverExplosionTorqueImpulse, _gameOverExplosionTorqueImpulse),
+                UnityEngine.Random.Range(-_gameOverExplosionTorqueImpulse, _gameOverExplosionTorqueImpulse),
+                UnityEngine.Random.Range(-_gameOverExplosionTorqueImpulse, _gameOverExplosionTorqueImpulse));
+
+            rb.AddForce(impulse, ForceMode.VelocityChange);
+            rb.AddTorque(torqueImpulse, ForceMode.VelocityChange);
+        }
+
+    }
 
     private void Reset()
     {
@@ -141,7 +200,8 @@ public class GameManager : MonoBehaviour
         InitTileArray();
         UpdateAllTileVisuals();
 
-        Debug.Log(TileAdjacentPositions(new Vector3Int(5, 5, 5)).ToList().Count);
+        _bombsLeft = _bombCount;
+        _tilesLeft = _width * _height * _depth;
     }
 
     void OnFirstClick()
@@ -149,6 +209,8 @@ public class GameManager : MonoBehaviour
         PlaceBombsRandomly();
         UpdateAdjacentBombCounts();
         UpdateAllTileVisuals();
+
+        _startTime = Time.time;
     }
 
     void InitTileArray()
@@ -358,6 +420,8 @@ public class GameManager : MonoBehaviour
 
         checkedTiles.Add(tile);
         tile.IsDiscovered = true;
+
+        _tilesLeft--;
 
         if (tile.IsFlagged)
         {

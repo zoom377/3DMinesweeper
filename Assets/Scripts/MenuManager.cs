@@ -18,10 +18,10 @@ public class MenuManager : MonoBehaviour
         depthInput = GameObject.Find("DepthInput").GetComponent<TMP_InputField>();
         percentageInput = GameObject.Find("PercentageInput").GetComponent<TMP_InputField>();
 
-        widthInput.text = PlayerPrefs.GetInt("Width", 10).ToString();
-        heightInput.text = PlayerPrefs.GetInt("Height", 10).ToString();
-        depthInput.text = PlayerPrefs.GetInt("Depth", 10).ToString();
-        percentageInput.text = PlayerPrefs.GetInt("Percentage", 10).ToString();
+        widthInput.text = PlayerPrefs.GetInt("Width", 8).ToString();
+        heightInput.text = PlayerPrefs.GetInt("Height", 8).ToString();
+        depthInput.text = PlayerPrefs.GetInt("Depth", 8).ToString();
+        percentageInput.text = PlayerPrefs.GetInt("Percentage", 5).ToString();
     }
 
 
