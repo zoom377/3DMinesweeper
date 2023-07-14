@@ -1,5 +1,15 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <ui:VisualElement>
-        <ui:Label text="Label" display-tooltip-when-elided="true" />
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/style.uss?fileID=7433441132597879392&amp;guid=e58c1e9e9170f4547ad40b4b97c5fcb1&amp;type=3#style" />
+    <ui:VisualElement name="Root" style="flex-grow: 1; flex-direction: column; align-items: center; justify-content: space-around; flex-wrap: nowrap; display: flex; visibility: visible; overflow: visible; opacity: 0.98; width: auto; margin-left: 32px; margin-right: 32px; margin-top: 32px; margin-bottom: 32px;">
+        <ui:Label text="3D Minesweeper" display-tooltip-when-elided="true" style="letter-spacing: 0; word-spacing: 10px; -unity-paragraph-spacing: 0; -unity-background-scale-mode: stretch-to-fill; border-left-width: 6px; border-right-width: 6px; border-top-width: 6px; border-bottom-width: 6px; border-top-left-radius: 17px; border-bottom-left-radius: 17px; border-top-right-radius: 17px; border-bottom-right-radius: 17px; border-left-color: rgb(51, 51, 51); border-right-color: rgb(51, 51, 51); border-top-color: rgb(51, 51, 51); border-bottom-color: rgb(51, 51, 51); color: rgb(204, 204, 204); font-size: 100px;" />
+        <ui:VisualElement name="Options" style="justify-content: flex-start; align-items: center;">
+            <ui:VisualElement>
+                <ui:Label text="Field width:" display-tooltip-when-elided="true" class="text textPrimary" />
+            </ui:VisualElement>
+            <ui:Label text="Field height:" display-tooltip-when-elided="true" class="text textPrimary" />
+            <ui:Label text="Field depth:" display-tooltip-when-elided="true" class="text textPrimary" />
+            <ui:Label text="Bomb percentage:" display-tooltip-when-elided="true" class="text textPrimary" />
+        </ui:VisualElement>
+        <ui:Button text="Play" display-tooltip-when-elided="true" class="button text" />
     </ui:VisualElement>
 </ui:UXML>

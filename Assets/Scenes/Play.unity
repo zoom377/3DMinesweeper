@@ -917,7 +917,7 @@ MonoBehaviour:
   _hoverSecondary: {r: 0.8, g: 0.8, b: 0.8, a: 1}
   flagged: {r: 1, g: 0, b: 0, a: 1}
   _debug: 1
-  _gameOverExplosionImpulse: 15
+  _gameOverExplosionImpulse: 10
   _gameOverExplosionTorqueImpulse: 20
   _gameOverText: {fileID: 79106349}
 --- !u!4 &1813902689

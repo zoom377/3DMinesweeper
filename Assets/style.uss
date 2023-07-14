@@ -1,0 +1,35 @@
+.textPrimary {
+    color: rgb(204, 204, 204);
+}
+
+.textSecondary {
+    color: rgb(128, 128, 128);
+}
+
+.background {
+    background-color: rgb(38, 38, 38);
+}
+
+.header {
+}
+
+.text {
+    font-size: 32px;
+}
+
+.button {
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    background-color: rgba(128, 128, 128, 0);
+    color: rgb(204, 204, 204);
+    border-left-width: 2px;
+    border-right-width: 2px;
+    border-top-width: 2px;
+    border-bottom-width: 2px;
+    border-left-color: rgb(128, 128, 128);
+    border-right-color: rgb(128, 128, 128);
+    border-top-color: rgb(128, 128, 128);
+    border-bottom-color: rgb(128, 128, 128);
+}
